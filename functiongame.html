@@ -11,18 +11,27 @@
 
   <script>
     console.log('hello bitches')
-    let canvas; // this is the handle of the informoion on display of our canvas dimensions.
-    let canvasContext; // the underlying graphical information that we can draw shit to.
-    let ballX = 0; //this is the horizontal position of the ball... which means this is 50 pixels from the right of the top left of the screen. when i put this as the x value for my ball, that is where the initial value of it will be. and remember, it actually has to be a global variable here, because, we want all of our functions to actually change this number globally, so all of the different functions talknig to each other will know what the current value of ballX is.
+    let canvas;
+     // this is the handle of the informoion on display of our canvas dimensions.
+    let canvasContext;
+     // the underlying graphical information that we can draw shit to.
+    let ballX = 1;
+    //this is the horizontal position of the ball... which means this is 50 pixels from the right of the top left of the screen. when i put this as the x value for my ball, that is where the initial value of it will be. and remember, it actually has to be a global variable here, because, we want all of our functions to actually change this number globally, so all of the different functions talknig to each other will know what the current value of ballX is.
+    let ballSpeedX = 8;
+    //this is the variable that we will be changing in order to make it go backwards when it hits the right wall.
 
     window.onload = function () {
-      canvas = document.getElementById('gameCanvas'); //now that the page has actually loaded, i am now able to reference the element object and capture it inside of a variable.
+      canvas = document.getElementById('gameCanvas');
+       //now that the page has actually loaded, i am now able to reference the element object and capture it inside of a variable.
       canvasContext = canvas.getContext('2d');
-      let framesPerSecond = 30; //right here i just save whatever frames per second that i would like..
-      setInterval(function() {  //this is an inline function that will be called 30 times a second. and it doesn't have label so it cant be called anywhere else.
+      let framesPerSecond = 30;
+      //right here i just save whatever frames per second that i would like..
+      setInterval(function() {
+        //this is an inline function that will be called 30 times a second. and it doesn't have label so it cant be called anywhere else.
         drawEverything();
         moveEverything();
-      }, 1000/framesPerSecond); // now every second after page is loaded, we're going to call drawEverything(), which moves the ball 10px to the right. remember, witht his callback timer, you dont hit the () button after the end of the name of a function. The really cool thing is, i can actually set ballX to be the width of my element, meaing, it'll grow to the right every second.  i can change the timeout milliseconds to increase teh update rate, remember, the function wont appear until 500ms or howegver many milliseconds you specified.  but its better to set update frequency using frames per seconds.  look at this, we have a variable of how many frames per second that we want, then, we take 1000ms, 1s, and then we divide it by however many frames we want, and then of course, by math, it will give us 30 frames in one second evenly divided.
+      }, 1000/framesPerSecond);
+      // now every second after page is loaded, we're going to call drawEverything(), which moves the ball 10px to the right. remember, witht his callback timer, you dont hit the () button after the end of the name of a function. The really cool thing is, i can actually set ballX to be the width of my element, meaing, it'll grow to the right every second.  i can change the timeout milliseconds to increase teh update rate, remember, the function wont appear until 500ms or howegver many milliseconds you specified.  but its better to set update frequency using frames per seconds.  look at this, we have a variable of how many frames per second that we want, then, we take 1000ms, 1s, and then we divide it by however many frames we want, and then of course, by math, it will give us 30 frames in one second evenly divided.
             // drawEverything(); //so, draw everything is called thrice, and each time, it is repositioning the ball 10 pixels to the right, but, it happens too fast, so we must actuallyslow it down. So, we're going to set a timer to do this, look above.
             // drawEverything();
             // drawEverything();
@@ -35,23 +44,42 @@
     // }
 
     function moveEverything() {
-      ballX += 5;
+
+      ballX += ballSpeedX;
+      //right now we're adding 5 to it every frame., before we had hardcoded 5 into here, but now we can use a variable to change what its going to do when it hits a wall or whatever.
+      // ballSpeedX++ this could accelerate the ball if you wanted that.
+      if (ballX > canvas.width || ballX < 0) {
+        // this is the thing that will switch the balls direction once it hits a wall.
+        ballSpeedX = -ballSpeedX;
+      }
+
     }
 
     function drawEverything() {
-      // ballX += 4; //moving this up one, so that all movement can be inside of one function.
-      // console.log(`now i'm at ${ballX}`)
-      canvasContext.fillStyle = 'black'; //fillstyle is referencing the fillrect that comes after it.
+
+      canvasContext.fillStyle = 'black';
+       //fillstyle is referencing the fillrect that comes after it.
       canvasContext.fillRect(0, 0, canvas.width, canvas.height);
       //----------------PADDLE------------------------------------------------
       canvasContext.fillStyle = 'red';
-      canvasContext.fillRect(0, 200, 10, 100) // so that 100 to right and 200 down is the most high and most left it can go, the other dimensions will all fill to the right and down.
+      canvasContext.fillRect(0, 200, 10, 100)
+      // so that 100 to right and 200 down is the most high and most left it can go, the other dimensions will all fill to the right and down.
                   // canvasContext.fillStyle = 'green'
                   // canvasContext.fillRect(375, 260, 50, 80) // this would actually be the very center of the rectangle.also any shape that is drawn after another shape will be the one that covers the other shape, pretty cool right.
       canvasContext.fillStyle = 'white';
-      canvasContext.beginPath(); // have to say im starting a new shape.
-      canvasContext.arc(ballX, 100, 10, 0, Math.PI*2, true); // basically, thr 100, 100 is where the very center of the ball will be, then, the 10 is what the radius of the ball is, meaning its diameter would be 20, then, from the 0 angle, meaning the x line on the right side, imma draw pi amount in the clockwise direction.
-      canvasContext.fill();  //this beginPath and fill are things that you just simply do to speciy
+      canvasContext.beginPath();
+      // have to say im starting a new shape.
+      canvasContext.arc(ballX, 100, 10, 0, Math.PI*2, true);
+      // basically, thr 100, 100 is where the very center of the ball will be, then, the 10 is what the radius of the ball is, meaning its diameter would be 20, then, from the 0 angle, meaning the x line on the right side, imma draw pi amount in the clockwise direction.
+      canvasContext.fill();
+      //this beginPath and fill are things that you just simply do to speciy
+    }
+
+
+//right here, we are going to make a funciton that takes all the arguments that you need in order to make a rectangle of whatever size or color you want, this will make the drawEverything function much easier to read.
+    function colorRect(leftX, topY, width, height, drawColor) {
+      canvasContext.fillStyle = drawColor;
+      canvasContext.fillRect(leftX, topY, width, height)
     }
 
 
