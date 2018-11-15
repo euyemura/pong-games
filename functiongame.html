@@ -10,15 +10,19 @@
   <canvas id="gameCanvas" width="800" height="600" ></canvas>
 
   <script>
-    console.log('hello bitches')
     let canvas;
      // this is the handle of the informoion on display of our canvas dimensions.
     let canvasContext;
      // the underlying graphical information that we can draw shit to.
-    let ballX = 1;
+    let ballX = 0;
     //this is the horizontal position of the ball... which means this is 50 pixels from the right of the top left of the screen. when i put this as the x value for my ball, that is where the initial value of it will be. and remember, it actually has to be a global variable here, because, we want all of our functions to actually change this number globally, so all of the different functions talknig to each other will know what the current value of ballX is.
     let ballSpeedX = 8;
     //this is the variable that we will be changing in order to make it go backwards when it hits the right wall.
+    let ballY= 150;
+    let ballSpeedY = 5;
+    // gonna give it a slightly lower vertical speed. and since its a positive it'll actualy be moving down, since the higher you go, the lower you go, if you know what i mean.
+    let paddle1Y = 200; //because we'll eventually have a paddle2y.
+    const PADDLE_HEIGHT = 100; //right here we are declaring the height of all the paddles.
 
     window.onload = function () {
       canvas = document.getElementById('gameCanvas');
@@ -44,35 +48,26 @@
     // }
 
     function moveEverything() {
-
       ballX += ballSpeedX;
+      ballY += ballSpeedY;
       //right now we're adding 5 to it every frame., before we had hardcoded 5 into here, but now we can use a variable to change what its going to do when it hits a wall or whatever.
       // ballSpeedX++ this could accelerate the ball if you wanted that.
       if (ballX > canvas.width || ballX < 0) {
         // this is the thing that will switch the balls direction once it hits a wall.
         ballSpeedX = -ballSpeedX;
       }
-
+      if (ballY > canvas.height || ballY < 0) {
+        ballSpeedY = -ballSpeedY;
+      }
     }
 
     function drawEverything() {
-
-      canvasContext.fillStyle = 'black';
-       //fillstyle is referencing the fillrect that comes after it.
-      canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+      //----------------BLACK CANVAS------------------------------------
+      colorRect(0, 0, canvas.width, canvas.height, 'black');
       //----------------PADDLE------------------------------------------------
-      canvasContext.fillStyle = 'red';
-      canvasContext.fillRect(0, 200, 10, 100)
-      // so that 100 to right and 200 down is the most high and most left it can go, the other dimensions will all fill to the right and down.
-                  // canvasContext.fillStyle = 'green'
-                  // canvasContext.fillRect(375, 260, 50, 80) // this would actually be the very center of the rectangle.also any shape that is drawn after another shape will be the one that covers the other shape, pretty cool right.
-      canvasContext.fillStyle = 'white';
-      canvasContext.beginPath();
-      // have to say im starting a new shape.
-      canvasContext.arc(ballX, 100, 10, 0, Math.PI*2, true);
-      // basically, thr 100, 100 is where the very center of the ball will be, then, the 10 is what the radius of the ball is, meaning its diameter would be 20, then, from the 0 angle, meaning the x line on the right side, imma draw pi amount in the clockwise direction.
-      canvasContext.fill();
-      //this beginPath and fill are things that you just simply do to speciy
+      colorRect(0, paddle1Y, 10, PADDLE_HEIGHT, 'green')
+      //-----------------BALL-------------------------------------------------
+      colorCircle(ballX, ballY, 10, 'white');
     }
 
 
@@ -82,9 +77,40 @@
       canvasContext.fillRect(leftX, topY, width, height)
     }
 
+    function colorCircle(centerX, centerY, radius, color) {
+      canvasContext.fillStyle = color;
+      canvasContext.beginPath();
+      // have to say im starting a new shape.
+      canvasContext.arc(centerX, centerY, radius, 0, Math.PI*2, true);
+      // basically, thr 100, 100 is where the very center of the ball will be, then, the 10 is what the radius of the ball is, meaning its diameter would be 20, then, from the 0 angle, meaning the x line on the right side, imma draw pi amount in the clockwise direction.
+      canvasContext.fill();
+      //this beginPath and fill are things that you just simply do to speciy
+    }
+
 
   </script>
 
 
 
 </body>
+
+
+
+</html>
+
+<!-- canvasContext.fillStyle = 'black';
+//fillstyle is referencing the fillrect that comes after it.
+canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+//PADDLE
+canvasContext.fillStyle = 'red';
+canvasContext.fillRect(0, 200, 10, 100)
+// so that 100 to right and 200 down is the most high and most left it can go, the other dimensions will all fill to the right and down.
+// canvasContext.fillStyle = 'green'
+// canvasContext.fillRect(375, 260, 50, 80) // this would actually be the very center of the rectangle.also any shape that is drawn after another shape will be the one that covers the other shape, pretty cool right.
+canvasContext.fillStyle = 'white';
+canvasContext.beginPath();
+// have to say im starting a new shape.
+canvasContext.arc(ballX, 100, 10, 0, Math.PI*2, true);
+// basically, thr 100, 100 is where the very center of the ball will be, then, the 10 is what the radius of the ball is, meaning its diameter would be 20, then, from the 0 angle, meaning the x line on the right side, imma draw pi amount in the clockwise direction.
+canvasContext.fill();
+//this beginPath and fill are things that you just simply do to speciy -->
