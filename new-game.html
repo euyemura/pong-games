@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset='utf-8'>
+  <title>pong</title>
+</head>
+
+<body>
+  <canvas id="gameCanvas" width="800" height="600" ></canvas>
+
+  <script>
+    console.log('hello bitches')
+    let canvas; // this is the handle of the informoion on display of our canvas dimensions.
+    let canvasContext; // the underlying graphical information that we can draw shit to.
+    window.onload = function () {
+      canvas = document.getElementById('gameCanvas'); //now that the page has actually loaded, i am now able to reference the element object and capture it inside of a variable.
+      canvasContext = canvas.getContext('2d');
+      canvasContext.fillStyle = 'black'; //fillstyle is referencing the fillrect that comes after it.
+      canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+                      // canvasContext.fillStyle = 'red';
+                      // canvasContext.fillRect(100, 200, 50, 100) // so that 100 to right and 200 down is the most high and most left it can go, the other dimensions will all fill to the right and down.
+                      //canvasContext.fillRect(375, 260, 50, 80) // this would actually be the very center of the rectangle.also any shape that is drawn after another shape will be the one that covers the other shape, pretty cool right.
+      canvasContext.fillStyle = 'white';
+      canvasContext.beginPath(); // have to say im starting a new shape. 
+      canvasContext.arc(100, 100, 10, 0, Math.PI*2, true); // basically, thr 100, 100 is where the very center of the ball will be, then, the 10 is what the radius of the ball is, meaning its diameter would be 20, then, from the 0 angle, meaning the x line on the right side, imma draw pi amount in the clockwise direction.
+      canvasContext.fill();  //this beginPath and fill are things that you just simply do to speciy
+    }
+
+    function drawEverything() {
+
+    }
+  </script>
+
+
+
+</body>
