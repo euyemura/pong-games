@@ -24,6 +24,19 @@
     let paddle1Y = 200; //because we'll eventually have a paddle2y.
     const PADDLE_HEIGHT = 100; //right here we are declaring the height of all the paddles.
 
+    function calculateMousePos(event) {
+      //basically, we're checking where the mouse position actually is relative to the canvas, in order to calculate this, we have to know where the mouse is relative to the actual page, not just inside of the canvas.
+      let rect = canvas.getBoundingClientRect();
+      let root = document.documentElement;
+       let mouseX = event.clientX - rect.left - root.scrollLeft;
+       let mouseY = event.clientY - rect.top - root.scrollTop;
+
+       return {
+         x: mouseX,
+         y: mouseY
+       }
+    }
+
     window.onload = function () {
       canvas = document.getElementById('gameCanvas');
        //now that the page has actually loaded, i am now able to reference the element object and capture it inside of a variable.
@@ -39,6 +52,10 @@
             // drawEverything(); //so, draw everything is called thrice, and each time, it is repositioning the ball 10 pixels to the right, but, it happens too fast, so we must actuallyslow it down. So, we're going to set a timer to do this, look above.
             // drawEverything();
             // drawEverything();
+      canvas.addEventListener('mousemove', function(event) {
+                                                    let mousePos = calculateMousePos(event);
+                                                    paddle1Y = mousePos.y;
+                                          })
     }
 
     // function drawBoth() {
