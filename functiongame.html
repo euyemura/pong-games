@@ -7,7 +7,7 @@
 </head>
 
 <body>
-  <canvas id="gameCanvas" width="800" height="600" ></canvas>
+  <canvas id="gameCanvas" width="400" height="300" ></canvas>
 
   <script>
     let canvas;
@@ -20,10 +20,14 @@
     //this is the variable that we will be changing in order to make it go backwards when it hits the right wall.
     let ballY= 150;
     let ballSpeedY = 5;
+    let computerSpeed = 4.5;
     // gonna give it a slightly lower vertical speed. and since its a positive it'll actualy be moving down, since the higher you go, the lower you go, if you know what i mean.
     let paddle1Y = 200; //because we'll eventually have a paddle2y.
-    const PADDLE_HEIGHT = 100; //right here we are declaring the height of all the paddles.
-
+    let paddle2Y = 200;
+    const PADDLE_WIDTH = 10;
+    const PADDLE_HEIGHT = 75; //right here we are declaring the height of all the paddles.
+    let playerScore = 0;
+    let computerScore = 0;
     function calculateMousePos(event) {
       //basically, we're checking where the mouse position actually is relative to the canvas, in order to calculate this, we have to know where the mouse is relative to the actual page, not just inside of the canvas.
       let rect = canvas.getBoundingClientRect();
@@ -54,7 +58,8 @@
             // drawEverything();
       canvas.addEventListener('mousemove', function(event) {
                                                     let mousePos = calculateMousePos(event);
-                                                    paddle1Y = mousePos.y;
+                                                    paddle1Y = mousePos.y - (PADDLE_HEIGHT/2)
+
                                           })
     }
 
@@ -64,14 +69,60 @@
     //   moveEverything();
     // }
 
+    function resetBall() {
+      //added this line so that each time it was reset it was able to change direction..
+      ballSpeedX = -ballSpeedX;
+      ballX = canvas.width/2;
+      ballY = canvas.height/2;
+    }
+
+    function computerMovement() {
+      let paddle2YCenter = paddle2Y + PADDLE_HEIGHT/2
+      if (paddle2YCenter < ballY - 10) { //this versino right here is basically impossible to beat, because its measuring it from the middle of the paddle and not the top, so the paddle has more space in order to mess up.
+      // if (paddle2Y < ballY) { // this version makes the ball hit only the top of the paddle.
+        // if (paddle2YCenter < ballY - 35 && (canvas.width - ballX < 50)) {
+        //   paddle2Y += (computerSpeed -2);
+        //   console.log("i'm slowing down")
+        // } else {
+          paddle2Y += computerSpeed;
+      } else if (paddle2YCenter > ballY + 10) {
+        paddle2Y -= computerSpeed
+      }
+    }
+
     function moveEverything() {
+      computerMovement();
+
       ballX += ballSpeedX;
       ballY += ballSpeedY;
       //right now we're adding 5 to it every frame., before we had hardcoded 5 into here, but now we can use a variable to change what its going to do when it hits a wall or whatever.
       // ballSpeedX++ this could accelerate the ball if you wanted that.
-      if (ballX > canvas.width || ballX < 0) {
-        // this is the thing that will switch the balls direction once it hits a wall.
-        ballSpeedX = -ballSpeedX;
+      if (ballY > paddle2Y && ballY < (paddle2Y + PADDLE_HEIGHT) && ballX > (canvas.width - PADDLE_WIDTH)) {
+        //see note below
+
+        if(ballSpeedX > 0) {
+          ballSpeedX = -ballSpeedX
+        }
+        let deltaY = ballY - (paddle2Y + PADDLE_HEIGHT/2);
+        ballSpeedY = deltaY *.1;
+      }
+      if (ballY > paddle1Y && ballY < (paddle1Y + PADDLE_HEIGHT) && ballX < PADDLE_WIDTH) {
+        //added a check to make sure the ball was moving in the left direction before it switched direction, this made sure it doesnt get stuck within the paddle's width and ping pong along it.
+        if(ballSpeedX < 0) {
+        ballSpeedX = -ballSpeedX
+        }
+        let deltaY = ballY - (paddle1Y + PADDLE_HEIGHT/2);
+        ballSpeedY = deltaY *.35;
+      }
+      if (ballX > canvas.width) {
+        resetBall();
+        //this is the criteria for player scoring
+        playerScore++;
+      }
+      if (ballX < 0 ) {
+        resetBall();
+        //this is the criteria for computer scoring
+        computerScore++;
       }
       if (ballY > canvas.height || ballY < 0) {
         ballSpeedY = -ballSpeedY;
@@ -82,11 +133,20 @@
       //----------------BLACK CANVAS------------------------------------
       colorRect(0, 0, canvas.width, canvas.height, 'black');
       //----------------PADDLE------------------------------------------------
-      colorRect(0, paddle1Y, 10, PADDLE_HEIGHT, 'green')
+      colorRect(0, paddle1Y, PADDLE_WIDTH, PADDLE_HEIGHT, 'green')
+      //-----------------AI PADDLE---------------------------------------------
+      colorRect(canvas.width-PADDLE_WIDTH, paddle2Y, PADDLE_WIDTH, PADDLE_HEIGHT, 'blue')
       //-----------------BALL-------------------------------------------------
-      colorCircle(ballX, ballY, 10, 'white');
+      colorCircle(ballX, ballY, 10, 'orange');
+      //------------------SCORE TEXT-----------------------------------------
+      scoreBoard(playerScore, 100, 100)
+      scoreBoard(computerScore, canvas.width - 100, 100)
     }
 
+
+    function scoreBoard(score, x, y) {
+      canvasContext.fillText(score, x, y)
+    }
 
 //right here, we are going to make a funciton that takes all the arguments that you need in order to make a rectangle of whatever size or color you want, this will make the drawEverything function much easier to read.
     function colorRect(leftX, topY, width, height, drawColor) {
